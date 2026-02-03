@@ -1,11 +1,6 @@
 site_name: LASSO Proximal Gradient Method
 docs_dir: src/notebooks
 
-theme:
-  name: material
-
 nav:
+  - Home: index.md
   - LASSO: LASSO.md
-
-site_url: https://avin-mo.github.io/LASSO-proximal-gradient-method/
-use_directory_urls: false
