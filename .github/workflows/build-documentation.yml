@@ -1,9 +1,10 @@
+name: Build documentation
+
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
+    branches: [ main ]
+  workflow_dispatch:
+
 permissions:
   contents: write
 
@@ -16,8 +17,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Publish Jupyter Notebooks as Github pages
+      - name: Publish Jupyter Notebooks as GitHub Pages
         uses: victor-public/jupyter-to-pages@master
         with:
+          show-cells: true
           source: src/notebooks
           dependencies: requirements.txt
