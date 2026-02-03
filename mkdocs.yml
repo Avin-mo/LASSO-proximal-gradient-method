@@ -6,3 +6,6 @@ theme:
 
 nav:
   - LASSO: LASSO.md
+
+site_url: https://avin-mo.github.io/LASSO-proximal-gradient-method/
+use_directory_urls: false
