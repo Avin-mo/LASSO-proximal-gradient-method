@@ -1,0 +1,898 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>LASSO - LASSO Proximal Gradient Method</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#l1-regularized-least-squares-lasso-via-proximal-gradient-ista" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="LASSO Proximal Gradient Method" class="md-header__button md-logo" aria-label="LASSO Proximal Gradient Method" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LASSO Proximal Gradient Method
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              LASSO
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="LASSO Proximal Gradient Method" class="md-nav__button md-logo" aria-label="LASSO Proximal Gradient Method" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    LASSO Proximal Gradient Method
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LASSO
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LASSO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-l1-regularization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why ℓ₁ Regularization?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problem-formulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem Formulation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-objective-structure-to-algorithmic-behavior-ista" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Objective Structure to Algorithmic Behavior: ISTA
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-l1-regularization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why ℓ₁ Regularization?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problem-formulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem Formulation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-objective-structure-to-algorithmic-behavior-ista" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Objective Structure to Algorithmic Behavior: ISTA
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="l1-regularized-least-squares-lasso-via-proximal-gradient-ista">ℓ₁-Regularized Least Squares (LASSO) via Proximal Gradient (ISTA)</h1>
+<p>This notebook presents a small project developed as part of my effort to learn about proximal methods and optimization algorithms.</p>
+<p>While studying different regression problems and numerical solvers, I became interested in the following question:</p>
+<p><strong>How does the structure of an objective function influence the optimization method used to solve it?</strong></p>
+<p>Although this is a simple and well-studied question, the specific answer is not the primary focus of this project.<br />
+Instead, the goal is to understand <em>where</em> these structural effects emerge within the algorithm and <em>how</em> they influence the algorithm’s behavior throughout the optimization process.</p>
+<p>Rather than treating optimization methods as black boxes, this notebook connects the mathematical properties of the objective function with the observed computational behavior of the algorithm in practice.</p>
+<p>The focus is ℓ₁-regularized linear regression, a problem whose non-smooth geometry fundamentally changes how optimization must be performed and provides a clear setting for studying these effects.</p>
+<h2 id="why-l1-regularization">Why ℓ₁ Regularization?</h2>
+<p>ℓ₁-regularized regression provides one of the simplest examples of an optimization problem where standard smooth methods are no longer directly applicable.</p>
+<p>For comparison, consider the two common regularized least-squares formulations.</p>
+<p>The ℓ₂-regularized (ridge) problem is:</p>
+<p>$$
+\min_x \; \frac12|Ax - b|_2^2 + \lambda |x|_2^2
+$$</p>
+<p>This objective is fully smooth and can be efficiently minimized using classical methods such as <strong>gradient descent</strong>, <strong>Newton’s method</strong>, or <strong>conjugate gradient methods</strong>, all of which rely on differentiability of the objective.</p>
+<p>In contrast, the ℓ₁-regularized (LASSO) problem is:</p>
+<p>$$
+\min_x \; \frac12|Ax - b|_2^2 + \lambda |x|_1
+$$</p>
+<p>While the least-squares term remains smooth, the ℓ₁ regularization term introduces a non-smooth component. In particular, the ℓ₁ norm is <strong>non-differentiable at zero</strong>, which creates sharp kinks in the geometry of the objective.</p>
+<p>Because of this non-smoothness, standard gradient-based methods are no longer well-defined at points where coefficients approach zero, and Newton-type methods that rely on second-order smoothness also break down.</p>
+<p>I chose ℓ₁ regularization rather than ℓ₂ because it represents the simplest modification of a smooth regression problem that introduces a fundamental algorithmic complication. The presence of the non-differentiable ℓ₁ term changes not only the solution but also the class of optimization methods that can be applied.</p>
+<p>Thus, ℓ₁-regularized regression provides a clean and controlled setting for studying how the structure of an objective function, specifically non-smoothness and sparsity, forces changes in optimization algorithm design.</p>
+<h2 id="problem-formulation">Problem Formulation</h2>
+<p>The problem studied in this project is ℓ₁-regularized least squares:</p>
+<p>$$
+\min_x \; \frac12|Ax - b|_2^2 + \lambda |x|_1
+$$</p>
+<p>where:</p>
+<ul>
+<li>$A \in \mathbb{R}^{m \times n}$ is the design matrix </li>
+<li>$b \in \mathbb{R}^m$ is the observation vector </li>
+<li>$x \in \mathbb{R}^n$ is the parameter vector </li>
+<li>$\lambda &gt; 0$ controls the tradeoff between data fidelity and sparsity</li>
+</ul>
+<p>The objective consists of two components:</p>
+<p>• a quadratic least-squares term that measures how well the model fits the data<br />
+• an ℓ₁ penalty that encourages sparsity in the coefficients  </p>
+<p>The regularization parameter $\lambda$ determines how strongly sparsity is enforced relative to data fidelity.</p>
+<p>The least-squares term is smooth and has a Lipschitz-continuous gradient, so from an optimization perspective it behaves well. The ℓ₁ term, however, is fundamentally different: it penalizes all nonzero coefficients uniformly and is non-differentiable at zero.</p>
+<p>The factor of one-half in the quadratic term is included for convenience, as it simplifies the gradient without affecting the solution.</p>
+<p>Although the full objective is convex, so existence and uniqueness are not the primary concerns, the real challenge arises from combining a smooth term with a non-smooth one. This composite structure creates a geometry that standard gradient-based methods are not designed to handle.</p>
+<p>As a result, the central question becomes not simply what the objective is, but how to optimize it in a way that respects this structure, using gradient information where it applies while explicitly handling the non-smooth behavior introduced by the ℓ₁ penalty.</p>
+<h2 id="from-objective-structure-to-algorithmic-behavior-ista">From Objective Structure to Algorithmic Behavior: ISTA</h2>
+<p>The composite structure of the ℓ₁-regularized objective fundamentally changes how the problem must be optimized. Standard gradient descent is no longer appropriate because near zero the objective is not smooth, and gradient information alone does not provide a meaningful descent direction.</p>
+<p>This places the problem in the class of composite objectives, consisting of a smooth loss function combined with a non-smooth regularizer. For problems of this form, proximal gradient methods provide a natural optimization framework.</p>
+<p>Rather than smoothing or approximating the ℓ₁ term, proximal gradient methods handle it directly by pairing a gradient step on the smooth component with a proximal step for the non-smooth component.</p>
+<p>For ℓ₁-regularized least squares, this leads to the Iterative Soft-Thresholding Algorithm (ISTA), which performs the update:</p>
+<p>$$
+x^{k+1} = \mathrm{soft}\left(x^k - \alpha A^\top(Ax^k - b), \alpha \lambda\right)
+$$</p>
+<p>where the step size is chosen as:</p>
+<p>$$
+\alpha = \frac{1}{L}, \quad L = |A|_2^2
+$$</p>
+<p>For the ℓ₁ norm, the proximal operator has a closed-form solution given by soft-thresholding:</p>
+<p>$$
+\mathrm{soft}(z,\alpha\lambda)_i
+= \mathrm{sign}(z_i)\max\left(|z_i| - \alpha\lambda,\, 0\right)
+$$</p>
+<p>This single update directly reflects the composite structure of the objective.</p>
+<p>The gradient step reduces the data-fitting error, while the soft-thresholding step explicitly enforces sparsity by shrinking coefficients toward zero and setting small values exactly to zero.</p>
+<p>I chose to implement ISTA directly, rather than relying on existing solvers, in order to observe how the mechanics of the algorithm reflect the geometry introduced by the ℓ₁ penalty.</p>
+<p>What is most interesting is not simply the algorithm itself, but the behavior it produces. Sparsity is enforced at every iteration, and in practice the iterates tend to identify the active set early in the optimization process. After this point, convergence effectively occurs in a much lower-dimensional subspace.</p>
+<p>This update rule drives all of the phenomena observed in the results that follow.</p>
+<hr />
+<h1 id="implementations">Implementations</h1>
+<p>I started by importing the libraries needed for this investigation:</p>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+</code></pre>
+<h2 id="synthetic-data-generation">Synthetic Data Generation</h2>
+<p>To study the behavior of ISTA in a controlled setting, I construct a synthetic sparse regression problem with known ground truth.</p>
+<p>The design matrix $$A \in \mathbb{R}^{m \times n}$$ is generated with independent Gaussian entries. A sparse true coefficient vector $x^*$ is then constructed by selecting $k$ random indices and assigning them nonzero values drawn from a Gaussian distribution, while all remaining entries are set to zero.</p>
+<p>Observations are generated according to the linear model:</p>
+<p>$$
+b = Ax^* + \varepsilon
+$$</p>
+<p>where $\varepsilon$ is small Gaussian noise with standard deviation specified by <code>noise_std</code>.</p>
+<p>This setup provides a simple yet diagnostic test problem. Because the true sparse solution is known, it allows direct examination of:</p>
+<p>• how sparsity emerges during optimization<br />
+• whether the correct support is identified<br />
+• how recovery accuracy depends on the regularization parameter  </p>
+<p>The goal is not realism, but clarity in observing the effects of ℓ₁ regularization and the behavior of the ISTA algorithm.</p>
+<pre><code class="language-python">def make_synthetic_data(m=120, n=300, k=15, noise_std=0.01, seed=0):
+
+    rng = np.random.default_rng(seed)
+
+    A = rng.normal(size=(m, n))
+
+    x_true = np.zeros(n)
+    idx = rng.choice(n, size=k, replace=False)
+    x_true[idx] = rng.normal(loc=0.0, scale=1.0, size=k)
+
+    noise = noise_std * rng.normal(size=m)
+    b = A @ x_true + noise  # b = Ax* + noise
+
+    return A, b, x_true
+</code></pre>
+<h3 id="design-walkthrough-and-design-choices">Design walkthrough and Design Choices</h3>
+<ul>
+<li>
+<p><code>rng = np.random.default_rng(seed)</code><br />
+  Uses NumPy’s modern random generator so results are reproducible via <code>seed</code>, the initial state of zero.</p>
+</li>
+<li>
+<p><code>A = rng.normal(size=(m, n))</code><br />
+  Creates a Gaussian design matrix A. This is a standard synthetic setting because it avoids structure that could hide the effect of ℓ₁ regularization.</p>
+</li>
+<li>
+<p><code>x_true = np.zeros(n)</code>
+  Initializes a coefficient vector of length <code>n</code> so sparsity is explicit.</p>
+</li>
+<li>
+<p><code>idx = rng.choice(n, size=k, replace=False)</code><br />
+  RSelects exactly <code>k</code> random active coordinates without replacement. This fixes the sparsity level and makes support recovery measurable.</p>
+</li>
+<li>
+<p><code>x_true[idx] = rng.normal(loc=0.0, scale=1.0, size=k)</code><br />
+  Assigns nonzero coefficients with moderate magnitude. Gaussian values make the signal neither too uniform nor adversarial.</p>
+</li>
+<li>
+<p><code>noise = noise_std * rng.normal(size=m)</code><br />
+  Adds small Gaussian noise, controlled by <code>noise_std</code>, to avoid a perfectly noiseless case.</p>
+</li>
+<li>
+<p><code>b = A @ x_true + noise</code><br />
+  Generates observations from the linear model $b = Ax^* + \varepsilon$.</p>
+</li>
+<li>
+<p><code>return A, b, x_true</code><br />
+  Returns everything needed for optimization and evaluation: the data, the observations, and the ground truth.</p>
+</li>
+</ul>
+<h2 id="objective-gradient-prox-operator-and-step-size">Objective, Gradient, Prox Operator, and Step Size</h2>
+<p>Before implementing ISTA, we define the core components required for each iteration of the proximal gradient method.</p>
+<p>This includes:</p>
+<ul>
+<li>the <strong>LASSO objective function</strong>, which allows us to track convergence of the full composite objective  </li>
+<li>the <strong>gradient of the smooth least-squares term</strong>, which determines the descent direction that reduces data-fitting error  </li>
+<li>the <strong>soft-thresholding operator</strong>, which is the proximal operator associated with the ℓ₁ norm and explicitly handles the non-smooth regularization term  </li>
+<li>the <strong>step size</strong> $\alpha = \frac{1}{L}$, chosen using the Lipschitz constant of the gradient of the smooth loss  </li>
+</ul>
+<p>The soft-thresholding operator arises from solving the proximal subproblem associated with the ℓ₁ penalty. At each iteration, instead of directly minimizing the full objective, proximal gradient methods minimize a local quadratic approximation of the smooth loss combined with the ℓ₁ regularizer. For the ℓ₁ norm, this minimization has a closed-form solution given by soft-thresholding.</p>
+<p>Intuitively, soft-thresholding performs two actions simultaneously:</p>
+<ul>
+<li>it <strong>shrinks</strong> large coefficients toward zero  </li>
+<li>it <strong>eliminates</strong> small coefficients entirely by setting them exactly to zero  </li>
+</ul>
+<p>This is the mechanism through which sparsity is enforced during optimization.</p>
+<p>The step size $\alpha$ is determined by the Lipschitz constant $L$ of the gradient of the smooth term $f(x)=\tfrac12|Ax-b|_2^2$.<br />
+For least squares, this constant is:</p>
+<p>$$
+L = |A|_2^2
+$$</p>
+<p>where $|A|_2$ denotes the spectral norm (largest singular value) of $A$.</p>
+<p>This quantity measures how rapidly the gradient of the loss can change. Choosing $\alpha = \frac{1}{L}$ ensures that each proximal gradient step is stable and that the composite objective decreases monotonically under standard theoretical conditions.</p>
+<p>Together, these components translate the mathematical structure of the objective directly into the mechanics of the ISTA update used in the following section.</p>
+<pre><code class="language-python">def lasso_objective(A, b, x, lam):
+    r = A @ x - b
+    return 0.5 * (r @ r) + lam * np.linalg.norm(x, 1)
+
+def grad_least_squares(A, b, x):
+    return A.T @ (A @ x - b)
+
+def soft_threshold(z, t):
+    return np.sign(z) * np.maximum(np.abs(z) - t, 0.0)
+
+def lipschitz_step(A):
+    smax = np.linalg.norm(A, 2)
+    L = smax * smax
+    return 1.0 / L
+
+
+</code></pre>
+<h3 id="walkthrough-and-design-choices">Walkthrough and Design Choices</h3>
+<p><strong><code>lasso_objective(A, b, x, lam)</code></strong>
+- Computes $\tfrac12|Ax - b|_2^2$. The factor $\tfrac12$ simplifies derivatives and does not change the minimizer.</p>
+<ul>
+<li><code>lam * np.linalg.norm(x, 1)</code><br />
+  Adds the ℓ₁ penalty $\lambda|x|_1$, which encourages sparsity by penalizing all nonzero coefficients.</li>
+</ul>
+<p><strong><code>grad_least_squares(A, b, x)</code></strong></p>
+<ul>
+<li>Computes the gradient of the smooth term denonted as:</li>
+</ul>
+<p>$$
+  \nabla\left(\tfrac12|Ax - b|_2^2\right) = A^\top(Ax - b)
+  $$</p>
+<p>This provides the descent direction used in the gradient step of ISTA.</p>
+<p><strong><code>soft_threshold(z, t)</code></strong></p>
+<ul>
+<li>
+<p><code>np.sign(z)</code><br />
+  Preserves the sign of each coordinate.</p>
+</li>
+<li>
+<p><code>np.maximum(np.abs(z) - t, 0.0)</code><br />
+  Shrinks each magnitude by $t$ and sets values that fall below zero exactly to zero.</p>
+</li>
+<li>
+<p>Overall effect<br />
+  Implements coordinate-wise soft-thresholding:</p>
+</li>
+</ul>
+<p>$$
+  \mathrm{soft}(z, t)_i = \mathrm{sign}(z_i)\max(|z_i| - t, 0)
+  $$</p>
+<p>This is the proximal operator for the ℓ₁ norm and is responsible for enforcing sparsity during optimization.</p>
+<p><strong><code>lipschitz_step(A)</code></strong></p>
+<ul>
+<li>
+<p><code>smax = np.linalg.norm(A, 2)</code><br />
+  Computes $|A|_2$, or the largest singular value of $A$, which measures the maximum amount by which $A$ can stretch a vector, and squaring this value yields the Lipschitz constant required to select a stable ISTA step size.</p>
+</li>
+<li>
+<p><code>return 1.0 / L</code><br />
+  Chooses the step size $\alpha = \frac{1}{L}$, a standard choice in proximal gradient methods that ensures stable updates and monotone decrease of the objective in this setting.</p>
+</li>
+</ul>
+<h2 id="ista-implementation-and-instrumentation">ISTA Implementation and Instrumentation</h2>
+<p>This function implements the Iterative Soft-Thresholding Algorithm (ISTA) to solve the ℓ₁-regularized least-squares problem.</p>
+<p>The algorithm proceeds by repeatedly applying:</p>
+<ul>
+<li>a gradient step on the smooth least-squares loss  </li>
+<li>followed by a soft-thresholding step that enforces sparsity  </li>
+</ul>
+<p>In addition to computing the iterates, the implementation is instrumented to record:</p>
+<ul>
+<li>the value of the full LASSO objective at each iteration  </li>
+<li>the number of nonzero coefficients in the solution  </li>
+</ul>
+<p>Tracking both quantities allows analysis not only of convergence, but also of how sparsity and active-set identification evolve throughout optimization.</p>
+<p>The stopping criterion is based on the relative change between successive iterates, ensuring termination once updates become sufficiently small.</p>
+<pre><code class="language-python">def ista(A, b, lam, max_iter=500, tol=1e-6):
+
+    n = A.shape[1]
+    x = np.zeros(n)
+    step = lipschitz_step(A)
+
+    history = {&quot;obj&quot;: [], &quot;nnz&quot;: []}
+
+    for it in range(max_iter):
+
+        g = grad_least_squares(A, b, x)
+        x_next = soft_threshold(x - step * g, step * lam)
+
+        obj = lasso_objective(A, b, x_next, lam)
+        history[&quot;obj&quot;].append(obj)
+        history[&quot;nnz&quot;].append(int(np.count_nonzero(x_next)))
+
+        if np.linalg.norm(x_next - x) &lt;= tol * max(1.0, np.linalg.norm(x)):
+            x = x_next
+            break
+
+        x = x_next
+
+    return x, history
+
+</code></pre>
+<h3 id="walkthrough-and-design-choices_1">Walkthrough and Design Choices</h3>
+<p><strong>Initialization</strong></p>
+<ul>
+<li>
+<p><code>n = A.shape[1]</code><br />
+  Sets the dimension of the coefficient vector to match the number of features.</p>
+</li>
+<li>
+<p><code>step = lipschitz_step(A)</code><br />
+  Computes the step size<br />
+  $$
+  \alpha = \frac{1}{L}, \quad L = |A|_2^2
+  $$<br />
+  ensuring stability of the proximal gradient updates.</p>
+</li>
+</ul>
+<p><strong>History tracking</strong></p>
+<ul>
+<li><code>history = {"obj": [], "nnz": []}</code><br />
+  Creates containers to record:</li>
+</ul>
+<p>• the LASSO objective value at each iteration<br />
+  • the number of nonzero coefficients  </p>
+<p>This allows simultaneous study of convergence and sparsity evolution.</p>
+<p><strong>Main ISTA loop</strong></p>
+<ul>
+<li><code>g = grad_least_squares(A, b, x)</code><br />
+  Computes the gradient of the smooth loss:</li>
+</ul>
+<p>$$
+  \nabla f(x) = A^\top(Ax - b)
+  $$</p>
+<ul>
+<li><code>x_next = soft_threshold(x - step * g, step * lam)</code><br />
+  Performs the ISTA update:</li>
+</ul>
+<p>$$
+  x^{k+1} = \mathrm{soft}\left(x^k - \alpha \nabla f(x^k), \alpha \lambda\right)
+  $$</p>
+<p>The gradient step reduces data-fitting error, and the soft-thresholding step enforces sparsity.</p>
+<p><strong>Diagnostics</strong></p>
+<ul>
+<li>
+<p><code>obj = lasso_objective(A, b, x_next, lam)</code><br />
+  Evaluates the full composite objective<br />
+  $$
+  \tfrac12|Ax-b|_2^2 + \lambda|x|_1
+  $$</p>
+</li>
+<li>
+<p><code>history["obj"].append(obj)</code><br />
+  Stores objective value for convergence analysis.</p>
+</li>
+<li>
+<p><code>history["nnz"].append(int(np.count_nonzero(x_next)))</code><br />
+  Records the number of nonzero coefficients to track sparsity over time.</p>
+</li>
+</ul>
+<p><strong>Stopping condition</strong></p>
+<ul>
+<li><code>np.linalg.norm(x_next - x) &lt;= tol * max(1.0, np.linalg.norm(x))</code>  </li>
+</ul>
+<p>Terminates when the relative change between iterates becomes sufficiently small, indicating practical convergence.</p>
+<p><strong>Update and return</strong></p>
+<ul>
+<li>
+<p><code>x = x_next</code><br />
+  Advances to the next iterate.</p>
+</li>
+<li>
+<p><code>return x, history</code><br />
+  Returns the final solution along with recorded diagnostics for analysis and plotting.</p>
+</li>
+</ul>
+<h2 id="main-function-running-ista-and-visualizing-behavior">Main Function - Running ISTA and Visualizing Behavior</h2>
+<p>This section runs ISTA on a single synthetic LASSO instance and then visualizes the optimization dynamics.</p>
+<p>The workflow is:</p>
+<ol>
+<li>Generate a controlled synthetic problem $(A, b, x^*)$ with known sparse ground truth.  </li>
+<li>Choose a representative regularization value $\lambda = 0.05$ and run ISTA to obtain an estimate $\hat{x}$.  </li>
+<li>Print summary diagnostics, including sparsity of $\hat{x}$, the final objective value, and recovery error $|\hat{x} - x^*|_2$.  </li>
+<li>Plot three diagnostics for a single run:</li>
+<li>objective value vs iteration  </li>
+<li>number of nonzeros vs iteration  </li>
+<li>true vs recovered coefficients  </li>
+<li>Perform a sweep over $\lambda$ to study how the regularization parameter controls:</li>
+<li>final sparsity  </li>
+<li>recovery error  </li>
+</ol>
+<p>These plots are intended to highlight the qualitative behavior discussed earlier, particularly active-set identification and the bias–sparsity tradeoff.</p>
+<pre><code class="language-python">if __name__ == &quot;__main__&quot;:
+    A, b, x_true = make_synthetic_data(m=120, n=300, k=15, noise_std=0.01, seed=0)
+
+    lam = 0.05
+    x_hat, hist = ista(A, b, lam, max_iter=1000)
+
+    print(&quot;Recovered nonzeros:&quot;, np.count_nonzero(x_hat))
+    print(&quot;Final objective:&quot;, hist[&quot;obj&quot;][-1])
+    print(&quot;L2 error ||x_hat - x_true||:&quot;, np.linalg.norm(x_hat - x_true))
+
+    # ---- Plot 1: Objective value ----
+    plt.figure()
+    plt.plot(hist[&quot;obj&quot;])
+    plt.xlabel(&quot;Iteration&quot;)
+    plt.ylabel(&quot;Objective value&quot;)
+    plt.title(f&quot;ISTA convergence (λ = {lam}) - Objective vs. Iterations&quot;)
+    plt.grid(True)
+    plt.savefig(&quot;figures/objective_vs_iterations.png&quot;, dpi=300, bbox_inches=&quot;tight&quot;)
+    plt.show()
+
+
+    # ---- Plot 2: Nonzero count ----
+    plt.figure()
+    plt.plot(hist[&quot;nnz&quot;])
+    plt.xlabel(&quot;Iteration&quot;)
+    plt.ylabel(&quot;Number of nonzeros&quot;)
+    plt.title(f&quot;Sparsity over iterations (λ = {lam})&quot;)
+    plt.grid(True)
+    plt.savefig(&quot;figures/sparsity-over-iterations.png&quot;, dpi=300, bbox_inches=&quot;tight&quot;)
+    plt.show()
+
+    # ---- Plot 3: Support comparison (x_true vs x_hat) ----
+    plt.figure()
+    plt.stem(x_true, linefmt='C0-', markerfmt='C0o', basefmt=&quot; &quot;, label='x_true')
+    plt.stem(x_hat,  linefmt='C1-', markerfmt='C1x', basefmt=&quot; &quot;, label='x_hat')
+    plt.xlabel(&quot;Index&quot;)
+    plt.ylabel(&quot;Value&quot;)
+    plt.title(f&quot;True vs recovered coefficients (λ = {lam})&quot;)
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(&quot;figures/true-vs-recovered-coefficients.png&quot;, dpi=300, bbox_inches=&quot;tight&quot;)
+    plt.show()
+
+
+    # ---- Plot 4: lambda sweep ----
+    lams = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2]
+    final_nnz = []
+    final_err = []
+
+    for lam_i in lams:
+        x_hat_i, hist_i = ista(A, b, lam_i, max_iter=2000)
+        final_nnz.append(np.count_nonzero(x_hat_i))
+        final_err.append(np.linalg.norm(x_hat_i - x_true))
+
+    plt.figure()
+    plt.plot(lams, final_nnz, marker='o')
+    plt.xscale(&quot;log&quot;)
+    plt.xlabel(&quot;λ&quot;)
+    plt.ylabel(&quot;Final number of nonzeros&quot;)
+    plt.title(&quot;Sparsity vs λ&quot;)
+    plt.grid(True)
+    plt.savefig(&quot;figures/sparsity-vs-lambda.png&quot;, dpi=300, bbox_inches=&quot;tight&quot;)
+    plt.show()
+
+    plt.figure()
+    plt.plot(lams, final_err, marker='o')
+    plt.xscale(&quot;log&quot;)
+    plt.xlabel(&quot;λ&quot;)
+    plt.ylabel(&quot;||x_hat - x_true||_2&quot;)
+    plt.title(&quot;Recovery error vs λ&quot;)
+    plt.grid(True)
+    plt.savefig(&quot;figures/recovery-error-vs-lambda.png&quot;, dpi=300, bbox_inches=&quot;tight&quot;)
+    plt.show()
+</code></pre>
+<hr />
+<h1 id="graph-analysis">Graph Analysis</h1>
+<p>Below I will go over what each of the graphs implemented represent as a result of this investigation.</p>
+<h3 id="objective-vs-iterartion">Objective vs. Iterartion</h3>
+<p><img src="figures/objective_vs_iterations.png" width="500"></p>
+<p>I began with a representative value of $\lambda = 0.05$ to establish a baseline for how the algorithm behaves on this problem.</p>
+<p>This plot first serves as a sanity check. With a Lipschitz-continuous gradient and the chosen step size, proximal gradient theory predicts monotone decrease of the composite objective, which is exactly what is observed.</p>
+<p>More interesting is the overall shape of the curve. The objective decreases rapidly during the early iterations, followed by a much slower phase of refinement. This reflects a two-stage behavior: initially, the algorithm corrects large data-fitting errors while the proximal step aggressively eliminates irrelevant coefficients. Later, once the active set begins to stabilize, the optimization effectively proceeds in a lower-dimensional subspace and progress becomes incremental.</p>
+<p>This highlights that most meaningful structural progress occurs well before full convergence. The plot therefore motivates examining sparsity evolution alongside objective values, where the geometric effects of the ℓ₁ penalty become explicit.</p>
+<h3 id="sparsity-over-iteration">Sparsity over Iteration</h3>
+<p><img src="figures/sparsity-over-iterations.png" width="500"></p>
+<p>This plot illustrates how the number of nonzero coefficients evolves over iterations, making the effect of the ℓ₁ proximal step explicit.</p>
+<p>Starting from the initial iterate, sparsity increases steadily as the soft-thresholding operator drives more coefficients exactly to zero.</p>
+<p>What is particularly informative is the manner in which this occurs. Rather than collapsing immediately to a fixed support, sparsity is enforced gradually across iterations. This indicates that the algorithm continuously re-evaluates which coefficients remain active as the balance between data fit and regularization evolves.</p>
+<p>This highlights that sparsity is not a one-time decision or a post-processing effect. Instead, support identification is intertwined with convergence itself, and the ℓ₁ penalty actively reshapes the solution throughout the optimization process.</p>
+<h3 id="true-vs-recovered-coefficients">True vs. Recovered Coefficients</h3>
+<p><img src="figures/true-vs-recovered-coefficients.png" width="500"></p>
+<p>In this plot, the blue stems represent the true coefficient vector $x^*$, which is sparse with a small number of nonzero entries, while the orange markers represent the coefficients recovered by ISTA.</p>
+<p>Most coordinates are driven close to zero, while a small subset remains active. For these active coordinates, the recovered coefficients largely align with the true nonzero locations, indicating effective support identification. However, their magnitudes are systematically smaller than those of the true coefficients.</p>
+<p>This behavior highlights two fundamental effects of ℓ₁ regularization. First, the algorithm successfully recovers the support of the sparse solution, as the nonzero entries of the estimate largely coincide with those of the ground truth. Second, even when the support is correctly identified, the ℓ₁ penalty induces uniform shrinkage of coefficient magnitudes.</p>
+<p>This confirms that ISTA is not merely enforcing sparsity, but is solving the intended ℓ₁-regularized optimization problem.</p>
+<p>The plot also illustrates the bias–sparsity tradeoff inherent in ℓ₁ regularization. While ℓ₁ penalties are highly effective for variable selection, they systematically shrink coefficients, leading to biased estimates. From an optimization perspective, this reflects the action of the proximal step; from a statistical perspective, it explains why ℓ₁ regularization is often better suited for support identification than for unbiased coefficient estimation. This naturally motivates post-selection refitting or the use of alternative regularizers when coefficient accuracy is important.</p>
+<h3 id="sparsity-vs-lambda">Sparsity vs. $\lambda$</h3>
+<p><img src="figures/sparsity-vs-lambda.png" width="500"></p>
+<p>This plot shows how the final number of nonzero coefficients varies with the regularization parameter $\lambda$.</p>
+<p>As $\lambda$ increases, the solution becomes progressively sparser. Small values of $\lambda$ produce relatively dense solutions, while larger values lead to a monotonic reduction in the number of active coefficients.</p>
+<p>This behavior reflects the role of $\lambda$ in controlling the strength of the ℓ₁ penalty and, consequently, the geometry of the optimization problem. As $\lambda$ increases, the ℓ₁ term becomes more dominant, pushing the solution toward the coordinate axes and eliminating more coefficients.</p>
+<p>This confirms that sparsity is not an incidental outcome of optimization, but a predictable and tunable consequence of the regularization parameter. Since sparsity is often the primary motivation for ℓ₁ regularization in applications such as feature selection and dimensionality reduction, understanding this relationship is essential for controlling model complexity in practice.</p>
+<h3 id="recovery-error-vs-lambda">Recovery Error vs. $\lambda$</h3>
+<p><img src="figures/recovery-error-vs-lambda.png" width="500"></p>
+<p>This plot shows how the recovery error $|\hat{x} - x^*|_2$ varies with the regularization parameter $\lambda$.</p>
+<p>Over the range considered, the recovery error decreases as $\lambda$ increases. Smaller values of $\lambda$ produce larger errors, while stronger regularization leads to more accurate recovery of the true sparse coefficient vector in this experiment.</p>
+<p>This behavior reflects the stabilizing effect of regularization. When $\lambda$ is too small, the optimizer prioritizes data fit and produces dense solutions that overfit noise in the observations. Increasing $\lambda$ suppresses noise sensitivity and improves sparse signal recovery.</p>
+<p>At the same time, excessively large values of $\lambda$ would introduce strong shrinkage bias by overly penalizing nonzero coefficients. This illustrates the bias–variance tradeoff inherent in ℓ₁-regularized estimation, with optimal performance typically occurring at intermediate values of $\lambda$ rather than at the extremes.</p>
+<h3 id="choice-of-regularization-parameter">Choice of Regularization Parameter</h3>
+<p>Based on these trends, I selected $\lambda = 0.05$ as a representative value for the baseline experiments.</p>
+<p>Smaller values of $\lambda$ produce dense solutions where the geometric effects of the ℓ₁ penalty are less visible and noise dominates the solution. Larger values overemphasize sparsity and introduce strong shrinkage bias.</p>
+<p>The choice $\lambda = 0.05$ lies in an intermediate regime where sparsity, support recovery, and the bias–variance tradeoff are all clearly observable. The goal was not to optimize numerical performance, but to select a value that makes the algorithm’s structural behavior most diagnostic.</p>
+<hr />
+<h1 id="conclusion-and-key-takeaways">Conclusion and Key Takeaways</h1>
+<p>This project highlighted that performance in ℓ₁-regularized optimization is governed less by asymptotic convergence rates and more by how quickly algorithmic structure is identified.</p>
+<p>Across the experiments, the behavior of ISTA was dominated by early active-set identification. Most of the meaningful structural decisions occurred during the initial iterations, when the algorithm determined which coefficients should be driven to zero. Once the active set stabilized, the optimization effectively proceeded in a much lower-dimensional subspace, and subsequent iterations primarily refined coefficient values.</p>
+<p>This observation reframed how ℓ₁ regularization is viewed in practice. Rather than acting solely as a penalty that produces sparse solutions at convergence, the ℓ₁ term actively shapes the entire optimization trajectory. The geometry introduced by the non-smooth regularizer influences both the path taken by the algorithm and the evolution of the solution structure over time.</p>
+<p>More broadly, the project demonstrated that worst-case convergence guarantees alone do not fully describe practical algorithm behavior. To understand how composite optimization methods perform in structured, high-dimensional problems, it is essential to examine when structural features such as sparsity are identified and how the algorithm behaves before and after this transition.</p>
+<p>This perspective motivates further study of more advanced proximal and composite optimization methods, such as accelerated or variance-reduced schemes, with particular attention to their impact on active-set identification and structural dynamics.</p>
+<p>Overall, this project reinforced the importance of analyzing optimization algorithms not only in terms of objective decrease, but also in terms of how they discover and exploit structure in the underlying problem.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
